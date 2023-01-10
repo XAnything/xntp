@@ -4,7 +4,6 @@ use std::io::{ Cursor, Seek, SeekFrom };
 use chrono::prelude::*;
 
 pub struct NtpClient;
-
 impl NtpClient {
     pub fn new() -> NtpClient {
         NtpClient
