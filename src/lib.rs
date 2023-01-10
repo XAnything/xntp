@@ -10,7 +10,7 @@ impl NtpClient {
     }
     pub fn request(self, server: &str) -> Response {
         let client = UdpSocket::bind("0.0.0.0:0").unwrap();
-        client.connect(server).unwrap();
+        client.connect(format!("{server}:123")).unwrap();
         let mut request_data = vec![0;48];
         request_data[0] = 0x1b;
         client.send(&request_data).unwrap();
@@ -32,7 +32,7 @@ impl NtpClient {
 }
 
 pub struct Response {
-    unix_time: u64,
+    pub unix_time: u64,
 }
 
 impl Response {
@@ -53,7 +53,7 @@ impl Response {
 #[test]
 fn test() {
     let client = NtpClient::new();
-    let res = client.request("ntp.aliyun.com:123");
+    let res = client.request("ntp.aliyun.com");
     println!("{}", res.unix_time);
     println!("{}", res.format_time("%Y-%m-%d %H:%M:%S"));
 }
