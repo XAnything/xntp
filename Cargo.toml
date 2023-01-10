@@ -1,10 +1,9 @@
 [package]
 name = "xntp"
-version = "0.1.2"
+version = "0.1.3"
 edition = "2021"
 exclude = ["/ci/*"]
 description = "A ntp client lib for Rust"
-homepage = "https://github.com/XAnything/xntp"
 readme = "README.md"
 keywords = [
     "ntp",

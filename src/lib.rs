@@ -1,3 +1,21 @@
+//! # XNtp
+//!
+//! `xntp` is a client of ntp to get net time and format
+//! 
+//! 
+//! # Example 
+//! ```rust
+//! use xntp::NtpClient;
+//! fn main(){
+//!     let client = NtpClient::new();
+//!     let res = client.request("ntp.aliyun.com");
+//!     println!("{}", res.unix_time);
+//!     println!("{}", res.format_time("%Y-%m-%d %H:%M:%S"));
+//! }
+//! 
+//! ```
+
+
 use std::net::UdpSocket;
 use byteorder::{ BigEndian, ReadBytesExt };
 use std::io::{ Cursor, Seek, SeekFrom };
