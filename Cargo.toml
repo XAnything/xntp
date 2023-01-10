@@ -5,7 +5,6 @@ edition = "2021"
 exclude = ["/ci/*"]
 description = "A ntp client lib for Rust"
 homepage = "https://github.com/XAnything/xntp"
-documentation = "https://docs.rs/xntp/"
 readme = "README.md"
 keywords = [
     "ntp",
