@@ -1,9 +1,9 @@
 //! # XNtp
 //!
 //! `xntp` is a client of ntp to get net time and format
-//! 
-//! 
-//! # Example 
+//!
+//!
+//! # Example
 //! ```rust
 //! use xntp::NtpClient;
 //! fn main(){
@@ -12,7 +12,7 @@
 //!     println!("{}", res.unix_time);
 //!     println!("{}", res.format_time("%Y-%m-%d %H:%M:%S"));
 //! }
-//! 
+//!
 //! ```
 
 
@@ -20,32 +20,33 @@ use std::net::UdpSocket;
 use byteorder::{ BigEndian, ReadBytesExt };
 use std::io::{ Cursor, Seek, SeekFrom };
 use chrono::prelude::*;
+use anyhow::Result;
 
 pub struct NtpClient;
 impl NtpClient {
     pub fn new() -> NtpClient {
         NtpClient
     }
-    pub fn request(self, server: &str) -> Response {
-        let client = UdpSocket::bind("0.0.0.0:0").unwrap();
-        client.connect(format!("{server}:123")).unwrap();
+    pub fn request(self, server: &str) -> Result<Response> {
+        let client = UdpSocket::bind("0.0.0.0:0")?;
+        client.connect(format!("{server}:123"))?;
         let mut request_data = vec![0;48];
         request_data[0] = 0x1b;
-        client.send(&request_data).unwrap();
+        client.send(&request_data)?;
         let mut buf = [0; 48];
-        client.recv(&mut buf).unwrap();
-        let ntp_second = self.unpack_ntp_data(&buf);
+        client.recv(&mut buf)?;
+        let ntp_second = self.unpack_ntp_data(&buf)?;
         let unix_second = ntp_second - 2208988800;
         let response = Response {
             unix_time: unix_second,
         };
-        response
+        Ok(response)
     }
-    fn unpack_ntp_data(self, buffer: &[u8; 48]) -> u64 {
+    fn unpack_ntp_data(self, buffer: &[u8; 48]) -> Result<u64> {
         let mut reader = Cursor::new(buffer);
-        reader.seek(SeekFrom::Current(40)).unwrap();
-        let ntp_second = reader.read_u32::<BigEndian>().unwrap();
-        u64::from(ntp_second)
+        reader.seek(SeekFrom::Current(40))?;
+        let ntp_second = reader.read_u32::<BigEndian>()?;
+        Ok(u64::from(ntp_second))
     }
 }
 
@@ -71,7 +72,7 @@ impl Response {
 #[test]
 fn test() {
     let client = NtpClient::new();
-    let res = client.request("ntp.aliyun.com");
+    let res = client.request("ntp.aliyun.com").unwrap();
     println!("{}", res.unix_time);
     println!("{}", res.format_time("%Y-%m-%d %H:%M:%S"));
 }
